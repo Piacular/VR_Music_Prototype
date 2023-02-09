@@ -17,12 +17,13 @@ public class PitchMaterialManager : MonoBehaviour
 
     public void ExitHover()
     {
-        if (!isHovered || chordLocked) return;
+        if (!isHovered) return;
 
         if (isHovered)
         {
             isHovered = false;
             
+
             if (!isOn)
             {
                 this.GetComponent<MeshRenderer>().material = offIdle;
@@ -30,7 +31,12 @@ public class PitchMaterialManager : MonoBehaviour
                 isPlaying = false;
             }
 
-            else if (isOn)
+            else if (isOn && !chordLocked)
+            {
+                this.GetComponent<MeshRenderer>().material = onIdle;
+            }
+
+            else if (isOn && chordLocked)
             {
                 this.GetComponent<MeshRenderer>().material = onIdle;
             }
@@ -39,7 +45,7 @@ public class PitchMaterialManager : MonoBehaviour
 
     public void EnterHover()
     {
-        if (isHovered ||chordLocked) return;
+        if (isHovered) return;
 
         else if (!isHovered)
         {
@@ -63,33 +69,43 @@ public class PitchMaterialManager : MonoBehaviour
 
     public void ToggleOn()
     {
+        //Debug.Log(this.name + " ToggleOn() Reporting status:");
+        //this.ReportStatus();
+
         if (!isOn)
         {
+            //Debug.Log(this.name + " if !isOn triggered");
             isOn = true;
             if (!isPlaying) 
-            { 
+            {
+                isPlaying = true;
                 sound.Play();
-                isPlaying = false;
             }
-            this.GetComponent<MeshRenderer>().material = onHovered;
+            this.GetComponent<MeshRenderer>().material = onIdle;
         }
 
         else if (isOn && !chordLocked)
         {
-            isOn = false;
-            sound.Pause();
-            isPlaying = false;
-
             //change material to hovered
             if (isHovered)
             {
-                this.GetComponent<MeshRenderer>().material = offHovered;
+                /**/               //this.GetComponent<MeshRenderer>().material = offHovered;
+                isOn = false;
+                chordLocked = false;
+                this.GetComponent<MeshRenderer>().material = held;
             }
 
             //change material to idle
-            else this.GetComponent<MeshRenderer>().material = offIdle;
-
+            else
+            {
+                isOn = false;
+                sound.Pause();
+                isPlaying = false;
+                this.GetComponent<MeshRenderer>().material = offIdle;
+            }
         }
+
+        //Debug.Log(this.name + "End ToggleOn() Reporting Status:");
     }
 
     public void TurnOff()
@@ -109,6 +125,19 @@ public class PitchMaterialManager : MonoBehaviour
     public void ChordLock(bool newstate)
     {
         chordLocked = newstate;
-        Debug.Log(this.name + " chordLocked = " + chordLocked);
+        //Debug.Log(this.name + " chordLocked = " + chordLocked);
+    }
+
+    public void ReportStatus()
+    {
+        Debug.Log(this.name + " isOn = " + isOn + ". isHovered = " + isHovered + ". isPlaying = " + isPlaying + ". chordLocked = " + chordLocked);
+    }
+
+    public void ChordtoHovered()
+    {
+        chordLocked = false;
+        isPlaying = true;
+        isHovered = true;
+        isOn = false;
     }
 }

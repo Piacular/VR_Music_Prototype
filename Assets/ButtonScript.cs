@@ -17,7 +17,7 @@ public class ButtonScript : MonoBehaviour
 
     public void TurnOff()
     {
-        Debug.Log("TurnOff() called in ButtonScript");
+        //Debug.Log("TurnOff() called in ButtonScript");
         
         if (turningOff) return;
         turningOff = true;

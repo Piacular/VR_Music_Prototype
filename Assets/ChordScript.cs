@@ -8,7 +8,7 @@ public class ChordScript : MonoBehaviour
     [SerializeField] GameObject Pitch1;
     [SerializeField] GameObject Pitch2;
     [SerializeField] GameObject Pitch3;
-    [SerializeField] Material idle, hovered;
+    [SerializeField] Material idle, hovered, emitting;
     public bool isHovered, isOn;
     private List<GameObject> pitches = new();
     public bool chordOn = false;
@@ -27,44 +27,64 @@ public class ChordScript : MonoBehaviour
 
     public void ToggleOn()
     {
-        Debug.Log(this.name + " ToggleOn() triggered. chordOn = " + chordOn + " . isHovered = " + isHovered + ". chordOn = " + chordOn + ". 1");
+        //.Log(this.name + " ToggleOn() triggered. Reporting Status 01: *******************");
+       // this.ReportStatus();
 
         if (!chordOn)
         {
             chordOn = true;
-            Debug.Log(this.name + " chordOn set to " + chordOn + ". 2");
-            this.GetComponent<MeshRenderer>().material.EnableKeyword("_EMISSION");
-            Debug.Log(this.name + " _EMISSION set to " + this.GetComponent<MeshRenderer>().material.IsKeywordEnabled("_EMISSION") + ". 3");
+            //Debug.Log(this.name + " chordOn set to " + chordOn + ". 2");
+            this.GetComponent<MeshRenderer>().material = emitting;
+            //Debug.Log(this.name + " _EMISSION set to " + this.GetComponent<MeshRenderer>().material.IsKeywordEnabled("_EMISSION") + ". 3");
+
         }
 
         else if (chordOn)
         {
-            Debug.Log(this.name + " chordOn set to true");
+            //Debug.Log(this.name + " chordOn set to false");
             chordOn = false;
-            this.GetComponent<MeshRenderer>().material.DisableKeyword("_EMISSION");
+            this.GetComponent<MeshRenderer>().material = hovered;
         }
+
+       // Debug.Log(this.name + " updated status 01:");
+       // this.ReportStatus();
 
         foreach (GameObject pitch in pitches)
         {
-            Debug.Log(this.name + " foreach loop triggered. 4");
+           // Debug.Log(pitch.name + " foreach loop triggered. Reporting Status 02:");
             bool pitchOn = pitch.GetComponent<PitchMaterialManager>().GetIsOn();
-            Debug.Log(pitch.name + " pitchOn = " + pitchOn);
+            //pitch.GetComponent<PitchMaterialManager>().ReportStatus();
+            //Debug.Log(pitch.name + " pitchOn = " + pitchOn + ". 5");
 
             if (chordOn)
             {
-                Debug.Log(this.name + " if (chordOn) triggered.");
+               // Debug.Log(pitch.name + " if (chordOn) triggered. Reporting Status 03:");
+               // pitch.GetComponent<PitchMaterialManager>().ReportStatus();
+
                 pitch.GetComponent<PitchMaterialManager>().ChordLock(true);
                 if (!pitchOn) pitch.GetComponent<PitchMaterialManager>().ToggleOn();
+
+               // Debug.Log(pitch.name + " updated status 03:");
+                //pitch.GetComponent<PitchMaterialManager>().ReportStatus();
             }
 
             else if (!chordOn)
             {
-                bool tempHov = pitch.GetComponent<PitchMaterialManager>().isHovered;
-                Debug.Log(this.name + " if (!chordOn) triggered.");
+               // Debug.Log(pitch.name + " if (!chordOn) triggered. Reporting Status 04:");
+               // pitch.GetComponent<PitchMaterialManager>().ReportStatus();
+                
                 pitch.GetComponent<PitchMaterialManager>().ChordLock(false);
-                //NEED TO CHANGE BELOW TO MAKE IT SO PITCH BLOCK GETS CONVERTED TO HOVERED INSTEAD OF STAYING BLUE
-                if (pitchOn && !tempHov) pitch.GetComponent<PitchMaterialManager>().ToggleOn();
+
+               // Debug.Log(pitch.name + " updated Status 04:");
+               // pitch.GetComponent<PitchMaterialManager>().ReportStatus();
+
+               
+                /**if (pitchOn && !tempHov)*/
+                pitch.GetComponent<PitchMaterialManager>().ToggleOn();
             }
+
+           // Debug.Log(pitch.name + " updated status 02:");
+           // pitch.GetComponent<PitchMaterialManager>().ReportStatus();
         }
 
     }
@@ -90,13 +110,20 @@ public class ChordScript : MonoBehaviour
 
     public void EmissionOn()
     {
-        Debug.Log("Turning Emission on.");
+        //Debug.Log("Turning Emission on.");
         this.GetComponent<MeshRenderer>().material.EnableKeyword("_EMISSION");
     }
 
     public void EmissionOff()
     {
-        Debug.Log("Turning Emission off.");
+        //Debug.Log("Turning Emission off.");
         this.GetComponent<MeshRenderer>().material.DisableKeyword("_EMISSION");
+
+   
+    }
+
+    public void ReportStatus()
+    {
+        Debug.Log(this.name + " isHovered = " + isHovered + ". isOn = " + isOn + ". chordOn = " + chordOn);
     }
 }

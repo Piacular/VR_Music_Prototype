@@ -23,19 +23,22 @@ public class OffSwitch : MonoBehaviour
 
     public void TurnOff()
     {
-        Debug.Log(this.name + " TurnOff() triggered.");
+       // Debug.Log(this.name + " TurnOff() triggered.");
         
         foreach (GameObject chord in chords)
         {
-            Debug.Log("chord " + chord.name + " selected. isOn = " + chord.GetComponent<ChordScript>().isOn);
+            bool chordOn = chord.GetComponent<ChordScript>().chordOn;
+           // Debug.Log("chord " + chord.name + " selected. isOn = " + chordOn);
 
-            if (!chord.GetComponent<ChordScript>().isOn)
+            if (chordOn)
             {
-                Debug.Log(chord.name + " ToggleOn().");
+               // Debug.Log(chord.name + " isOn selected - > ToggleOn");
                 chord.GetComponent<ChordScript>().ToggleOn();
-                Debug.Log(chord.name + " Disabling Emission.");
+               // Debug.Log(chord.name + " Disabling Emission.");
                 chord.GetComponent<MeshRenderer>().material.DisableKeyword("_EMISSION");
             }
+
+            //else return;
 
         }
 
@@ -43,6 +46,7 @@ public class OffSwitch : MonoBehaviour
         {
             PitchMaterialManager pMan = child.GetComponent<PitchMaterialManager>();
             pMan.TurnOff();
+            pMan.ChordLock(false);
         }
         
     }
